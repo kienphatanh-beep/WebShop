@@ -1,0 +1,144 @@
+﻿/* --- HEADER STYLES --- */
+.header-appbar {
+    background-color: #3e3e3f !important; /* Màu xám đậm */
+    box-shadow: none !important;
+    width: 100%;
+    z-index: 1100;
+}
+
+/* Căn giữa chiều dọc và tạo khoảng cách trên dưới */
+.header-toolbar {
+    min-height: 64px !important;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* LOGO */
+.logo-text {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    white-space: nowrap;
+    margin-right: 20px;
+}
+
+.logo-icon {
+    border: 1px solid white;
+    padding: 3px 6px;
+    margin-right: 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: normal;
+}
+
+/* --- PHẦN TÌM KIẾM --- */
+.search-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-start; 
+    /* Giữ nguyên khoảng cách bên trái */
+    margin-left: 60px; 
+    margin-right: 20px;
+}
+
+.search-wrapper {
+    position: relative;
+    border-radius: 8px;
+    background-color: #ffffff;
+    width: 100%;
+    /* --- ĐÃ SỬA: Tăng độ dài lên 650px để kéo dài ra bên phải --- */
+    max-width: 650px; 
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    transition: all 0.2s;
+}
+
+/* Hiệu ứng khi hover vào ô tìm kiếm */
+.search-wrapper:hover {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+.search-input .MuiInputBase-input {
+    padding: 8px 10px;
+    width: 100%;
+    color: #333;
+    font-size: 14px;
+}
+
+/* --- ACTION BUTTONS (Giỏ hàng, Tài khoản...) --- */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px; 
+    white-space: nowrap;
+    margin-right: 40px; 
+}
+
+.action-btn {
+    color: #d2d2d7 !important;
+    text-transform: none !important;
+    font-size: 15px !important; 
+    font-weight: 500 !important; 
+}
+
+.action-btn:hover {
+    color: #fff !important;
+}
+
+/* --- MENU NAVIGATION (Dòng 2) --- */
+.menu-container {
+    display: none;
+    background-color: #3e3e3f; 
+    justify-content: center;
+    padding: 12px 0;
+}
+
+@media (min-width: 900px) {
+    .menu-container {
+        display: flex;
+    }
+}
+
+.menu-link {
+    color: #cecece;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 25px;
+    transition: color 0.2s;
+    position: relative;
+}
+
+.menu-link:hover {
+    color: #fff;
+}
+
+/* --- FOOTER STYLES --- */
+.footer-container {
+    background-color: #151515;
+    color: #86868b;
+    padding-top: 48px;
+    padding-bottom: 32px;
+    margin-top: auto;
+    width: 100%;
+}
+
+.footer-title {
+    color: white;
+    font-weight: bold !important;
+    margin-bottom: 16px !important;
+    font-size: 1.1rem !important;
+}
+
+.highlight-text {
+    color: #0066cc;
+    font-weight: 500;
+}

@@ -1,0 +1,102 @@
+﻿.orders-page-root {
+    min-height: 100vh;
+    background: #000;
+    color: #fff;
+    padding-bottom: 50px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.page-title {
+    font-weight: 900 !important;
+    letter-spacing: -1px;
+    margin-bottom: 40px !important;
+    display: flex;
+    align-items: center;
+}
+
+.order-glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: 0.3s ease;
+}
+
+.order-glass-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(0, 255, 136, 0.3);
+}
+
+.order-header {
+    padding: 25px;
+    cursor: pointer;
+}
+
+.order-details-body {
+    padding: 0 25px 25px 25px;
+}
+
+.status-chip {
+    background: rgba(0, 255, 136, 0.1) !important;
+    color: #00ff88 !important;
+    border: 1px solid rgba(0, 255, 136, 0.2) !important;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 8px 15px;
+    border-radius: 10px;
+}
+
+.product-row-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 15px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+}
+
+.order-item-img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.empty-orders-card {
+    text-align: center;
+    padding: 100px 0;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 30px;
+    border: 2px dashed rgba(255, 255, 255, 0.05);
+}
+
+/* Hiệu ứng sương mù layer giống trang Cart */
+.fog-layer {
+    position: fixed;
+    top: -10%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0, 204, 255, 0.1) 0%, transparent 70%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}

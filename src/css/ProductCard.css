@@ -1,0 +1,122 @@
+﻿/* --- TỔNG THỂ CARD --- */
+.product-card {
+    border-radius: 16px !important;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border: 1px solid #f0f0f0 !important;
+    position: relative; /* Để các badge absolute bám theo */
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+}
+
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.12) !important;
+    border-color: #0066cc !important;
+}
+
+/* --- BADGES (Nổi lên trên ảnh) --- */
+.discount-badge {
+    position: absolute;
+    top: 12px;
+    left: 0;
+    background-color: #d70018;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    z-index: 10;
+}
+
+.new-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #28a745;
+    color: #28a745;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* --- KHUNG ẢNH ĐỒNG BỘ --- */
+.card-image-wrapper {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Ép card luôn là hình vuông bất kể ảnh gốc */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Ảnh không bị méo, tự co dãn trong khung vuông */
+    transition: transform 0.5s ease;
+}
+
+.product-card:hover .card-image {
+    transform: scale(1.08);
+}
+
+/* --- PHẦN THÔNG TIN --- */
+.card-content {
+    flex-grow: 1; /* Đẩy nội dung chiếm hết diện tích còn lại */
+    padding: 12px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Căn giữa tên và giá */
+    text-align: center;
+}
+
+.product-title {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: #333;
+    margin-bottom: 8px !important;
+    /* Giới hạn đúng 2 dòng, quá 2 dòng hiện dấu ... */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.6em; /* Giữ chỗ cho 2 dòng dù tên ngắn */
+}
+
+/* --- PHẦN GIÁ --- */
+.price-section {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.current-price {
+    color: #0066cc;
+    font-weight: 800 !important;
+    font-size: 1.1rem !important;
+}
+
+.original-price-container {
+    height: 1.2em; /* Giữ chiều cao cố định để không bị giật layout */
+}
+
+.original-price {
+    color: #999;
+    text-decoration: line-through;
+    font-size: 0.85rem !important;
+}
