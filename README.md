@@ -1,16 +1,8 @@
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+🛒 WebShop Frontend - React + VitePhần giao diện người dùng của hệ thống WebShop, được xây dựng với React, Vite và Material-UI. Dự án được tối ưu hóa cho trải nghiệm mua sắm mượt mà, mô phỏng các tính năng của trang thương mại điện tử hiện đại.🛠 Công Nghệ Sử DụngCore: React 18 + Vite (HMR enabled)UI Framework: Material-UI (MUI) v5Routing: React Router DOM v6Styling: Inter Font, CSS BaselineState Management/API: Axios (dùng để call API từ Backend)🚀 Cài Đặt và Khởi Chạy1. Cài đặt các gói phụ thuộcTại thư mục gốc của frontend, chạy lệnh:Bashnpm install
+# hoặc
+yarn install
+2. Cấu hình Môi trườngDự án được ép chạy ở cổng 8081 để tránh xung đột với các dịch vụ khác (như Backend chạy 8080).Cấu hình hiện tại trong vite.config.js:Port: 8081StrictPort: True (Nếu cổng 8081 bị chiếm, hệ thống sẽ báo lỗi thay vì tự đổi sang cổng khác).3. Chạy dự ánBashnpm run dev
+Truy cập tại địa chỉ: http://localhost:8081📂 Cấu Trúc Trang (Routes)Dự án bao gồm các trang chính sau:Đường dẫnTrang (Page)Mô tả/ShopPageTrang chủ hiển thị danh sách sản phẩm./products/:idProductDetailPageChi tiết sản phẩm./loginLoginPageĐăng nhập hệ thống./registerRegisterPageĐăng ký tài khoản mới./cartCartPageGiỏ hàng của người dùng./ordersOrdersPageLịch sử đơn hàng./profileProfilePageThông tin cá nhân./shopShopCửa hàng/Danh mục sản phẩm mở rộng.💾 Hướng Dẫn Thử Data (Mock/Seed Data)Để kiểm tra giao diện khi chưa có Backend:Dùng Mock Data: Bạn có thể tạo file src/data/mockData.js để chứa danh sách sản phẩm mẫu.Kết nối API: Đảm bảo Backend Java đang chạy tại http://localhost:8080. Cấu hình baseURL trong Axios để trỏ về đúng địa chỉ này.🌿 Quy Trình Sử Dụng GitĐể đảm bảo code không bị xung đột, hãy tuân thủ các bước sau:1. Làm việc trên nhánh riêngBashgit checkout -b feature/ten-chuc-nang
+2. Commit code (Theo chuẩn)Bashgit add .
+git commit -m "feat: thêm giao diện trang Profile"
+3. Đẩy code và Pull Request (PR)Đẩy nhánh lên server: git push origin feature/ten-chuc-nangVào GitHub chọn Compare & Pull Request.Mô tả ngắn gọn những gì bạn đã làm (ví dụ: "Đã thêm component Sidebar và sửa lỗi hiển thị Cart").Chỉ Merge vào nhánh main sau khi code đã chạy ổn định.
