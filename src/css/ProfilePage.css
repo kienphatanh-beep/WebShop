@@ -1,0 +1,99 @@
+﻿/* --- ROOT & BACKGROUND --- */
+.profile-view {
+    background: radial-gradient(circle at center, #2b2b2b 0%, #1a1a1a 50%, #000000 100%) !important;
+    min-height: 100vh; width: 100%; position: relative; overflow-x: hidden; display: block !important;
+}
+
+.fog-layer {
+    position: absolute; top: 0; left: 0; width: 200%; height: 100%;
+    background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.05) 50%, transparent 100%);
+    animation: fogMove 20s linear infinite; z-index: 1; pointer-events: none;
+}
+.fog-layer-2 { animation-duration: 35s; opacity: 0.4; }
+@keyframes fogMove { 0% { transform: translateX(-50%); } 100% { transform: translateX(0%); } }
+
+/* --- FIX LAYOUT: RỘNG VÀ THOÁNG --- */
+.profile-main-container { position: relative; z-index: 10; padding-top: 60px; padding-bottom: 60px; }
+
+.profile-flex-layout {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 50px; /* Tăng khoảng cách để không bị dính */
+}
+
+/* Sidebar giữ độ rộng cũ */
+.sidebar-wrapper {
+    flex: 0 0 320px; 
+}
+
+/* 🔥 CONTENT MỞ RỘNG (Wider form) */
+.content-wrapper {
+    flex: 0 1 680px; /* Tăng chiều rộng để nội dung không bị đè */
+}
+
+/* GLASS CARD STYLE */
+.profile-glass-card {
+    background: rgba(30, 30, 30, 0.75) !important;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 24px !important;
+    color: #fff !important;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5) !important;
+}
+
+.sidebar-box { padding: 45px 20px; text-align: center; height: 100%; }
+.content-box { padding: 50px; height: 100%; }
+
+/* --- AVATAR RING & Z-INDEX FIX --- */
+.avatar-anim-container {
+    position: relative; display: inline-flex; justify-content: center; align-items: center;
+}
+.avatar-relative { position: relative; z-index: 10; }
+
+.neon-ring {
+    position: absolute; width: 170px; height: 170px; border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 20%, #00c6ff, #00ff88, transparent 80%);
+    animation: rotateRing 4s linear infinite;
+}
+@keyframes rotateRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.main-avt {
+    width: 140px !important; height: 140px !important;
+    border: 5px solid #111 !important; z-index: 5;
+}
+
+/* Icon máy ảnh luôn nằm trên cùng */
+.cam-label { position: absolute; bottom: 8px; right: 8px; z-index: 99 !important; }
+.cam-btn { background: #fff !important; color: #000 !important; width: 35px !important; height: 35px !important; }
+
+/* --- FORM & TABS --- */
+.profile-tabs-custom .MuiTab-root {
+    color: rgba(255,255,255,0.4) !important; text-transform: none !important;
+    justify-content: flex-start !important; border-radius: 12px; margin-bottom: 8px;
+    font-size: 0.9rem !important;
+}
+.profile-tabs-custom .Mui-selected { color: #00c6ff !important; background: rgba(0, 198, 255, 0.1); }
+.profile-tabs-custom .MuiTabs-indicator { display: none; }
+
+/* Các ô nhập liệu đồng nhất */
+.dark-field .MuiOutlinedInput-root {
+    color: #fff !important; background: rgba(255,255,255,0.04) !important;
+    border-radius: 12px !important; height: 55px;
+}
+.dark-field .MuiInputLabel-root { color: #888 !important; }
+.dark-field .MuiOutlinedInput-notchedOutline { border-color: rgba(255,255,255,0.1) !important; }
+
+.btn-modern {
+    background: #fff !important; color: #000 !important; font-weight: 900 !important;
+    border-radius: 12px !important; padding: 16px !important; transition: 0.3s !important;
+}
+.btn-modern:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(255,255,255,0.2) !important; }
+
+.highlight-text { color: #00c6ff; font-weight: 900; letter-spacing: 1px; }
+.vip-badge { background: #00c6ff; color: #000; padding: 3px 12px; border-radius: 4px; font-weight: 900; font-size: 0.7rem; margin-top: 10px; display: inline-flex; }
+
+/* Utils */
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.full-height { height: 100%; }

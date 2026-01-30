@@ -1,102 +1,111 @@
-﻿.orders-page-root {
+﻿/* --- ROOT & BACKGROUND --- */
+.orders-page-root {
     min-height: 100vh;
-    background: #000;
-    color: #fff;
-    padding-bottom: 50px;
+    width: 100%;
+    background: radial-gradient(circle at 50% 0%, #1a1a20 0%, #000 100%);
     position: relative;
     overflow-x: hidden;
+    color: #ffffff;
 }
 
-.page-title {
-    font-weight: 900 !important;
-    letter-spacing: -1px;
-    margin-bottom: 40px !important;
-    display: flex;
-    align-items: center;
-}
-
-.order-glass-card {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 20px;
-    margin-bottom: 20px;
-    overflow: hidden;
-    transition: 0.3s ease;
-}
-
-.order-glass-card:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(0, 255, 136, 0.3);
-}
-
-.order-header {
-    padding: 25px;
-    cursor: pointer;
-}
-
-.order-details-body {
-    padding: 0 25px 25px 25px;
-}
-
-.status-chip {
-    background: rgba(0, 255, 136, 0.1) !important;
-    color: #00ff88 !important;
-    border: 1px solid rgba(0, 255, 136, 0.2) !important;
-    font-weight: bold;
-    margin-left: 10px;
-}
-
-.meta-item {
-    display: flex;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 8px 15px;
-    border-radius: 10px;
-}
-
-.product-row-item {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    background: rgba(255, 255, 255, 0.02);
-    padding: 15px;
-    border-radius: 15px;
-    margin-bottom: 10px;
-}
-
-.order-item-img {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
-    background: #fff;
-    border-radius: 10px;
-    padding: 5px;
-}
-
-.empty-orders-card {
-    text-align: center;
-    padding: 100px 0;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 30px;
-    border: 2px dashed rgba(255, 255, 255, 0.05);
-}
-
-/* Hiệu ứng sương mù layer giống trang Cart */
-.fog-layer {
-    position: fixed;
-    top: -10%;
-    right: -10%;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(0, 204, 255, 0.1) 0%, transparent 70%);
-    z-index: 1;
+.glow-orb-top {
+    position: absolute; top: -150px; left: 50%; transform: translateX(-50%);
+    width: 700px; height: 350px;
+    background: radial-gradient(circle, rgba(0, 198, 255, 0.15) 0%, transparent 70%);
     pointer-events: none;
 }
 
-.flex-center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 80vh;
+.fog-layer {
+    position: fixed; top: 0; left: 0; width: 200%; height: 100%;
+    background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.02) 50%, transparent 100%);
+    animation: fogMove 25s linear infinite;
+    z-index: 1; pointer-events: none;
 }
+.fog-layer-2 { animation-duration: 45s; opacity: 0.5; }
+@keyframes fogMove { 0% { transform: translateX(-50%); } 100% { transform: translateX(0%); } }
+
+/* --- TYPOGRAPHY --- */
+.orders-title-4d {
+    font-weight: 900 !important;
+    letter-spacing: -1.5px;
+    color: #fff;
+    text-shadow: 0 0 15px rgba(0, 198, 255, 0.5);
+}
+
+.breadcrumb-link-modern {
+    text-decoration: none; color: #888; font-size: 0.75rem; font-weight: 500; transition: 0.3s;
+}
+.breadcrumb-link-modern:hover { color: #00c6ff; }
+
+/* --- CARD 4D GLASSMORPISM --- */
+.order-card-4d {
+    background: rgba(255, 255, 255, 0.03) !important;
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 20px !important;
+    margin-bottom: 20px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+}
+
+.order-card-4d:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(0, 198, 255, 0.4) !important;
+    transform: translateY(-3px);
+}
+
+.order-card-4d.active {
+    background: rgba(20, 20, 25, 0.95) !important;
+    border-color: rgba(0, 255, 136, 0.2) !important;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+}
+
+.order-summary-header { padding: 25px 35px; cursor: pointer; }
+
+.order-id-text { font-weight: 900; color: #00c6ff; font-size: 1rem; letter-spacing: 0.5px; }
+.order-date-text { color: #888; font-size: 0.75rem; margin-top: 4px; }
+
+.status-pill-modern {
+    display: inline-flex; align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 5px 15px; border-radius: 50px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.order-amount-text { color: #00ff88; font-weight: 900 !important; }
+
+.toggle-detail-label {
+    font-size: 0.65rem; font-weight: 800; color: #555;
+    display: flex; align-items: center; justify-content: flex-end;
+    margin-top: 4px; letter-spacing: 1px;
+}
+
+/* --- PRODUCT ITEM 4D --- */
+.product-item-4d-row {
+    display: flex; align-items: center; gap: 20px;
+    padding: 15px; background: rgba(255, 255, 255, 0.01);
+    border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.03);
+    transition: 0.3s;
+}
+
+.product-img-wrapper-4d {
+    width: 60px; height: 60px; background: #fff; padding: 5px;
+    border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    display: flex; align-items: center; justify-content: center;
+}
+.product-img-wrapper-4d img { width: 100%; height: 100%; object-fit: contain; }
+
+.order-details-body { padding: 0 35px 30px 35px; }
+
+.order-footer-meta {
+    margin-top: 25px; padding-top: 20px;
+    border-top: 1px dashed rgba(255,255,255,0.1);
+}
+
+/* --- OTHERS --- */
+.empty-orders-view-modern {
+    text-align: center; padding: 100px 0; border-radius: 30px;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.flex-center { display: flex; align-items: center; justify-content: center; min-height: 80vh; }

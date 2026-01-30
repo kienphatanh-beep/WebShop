@@ -1,85 +1,157 @@
-﻿.shop-container {
-    padding-top: 40px;
-    padding-bottom: 60px;
-    background-color: #f5f5f7; /* Màu nền xám nhạt kiểu Apple */
-}
-
-.shop-sidebar {
-    background-color: #ffffff;
-    padding: 24px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 100px;
-    border: 1px solid #e0e0e0;
-}
-
-/* Tùy chỉnh danh sách danh mục */
-.MuiListItemButton-root {
-    border-radius: 8px !important;
-    margin-bottom: 4px;
-}
-
-.MuiListItemButton-root.Mui-selected {
-    background-color: #eef6ff !important;
-    color: #0066cc !important;
-}
-
-.MuiListItemButton-root.Mui-selected .MuiTypography-root {
-    font-weight: 600;
-}
-
-.apply-filter-btn {
-    background-color: #0066cc !important;
-    text-transform: none !important;
-    font-weight: 600 !important;
-    border-radius: 8px !important;
-    padding: 10px !important;
-    margin-top: 10px !important;
-}
-
-.apply-filter-btn:hover {
-    background-color: #004499 !important;
-}
-
-.MuiSlider-root {
-    color: #0066cc !important;
-}
-
-.MuiPagination-root .Mui-selected {
-    background-color: #0066cc !important;
-    color: white !important;
-}
-.shop-container {
-    background-color: #f8f9fa;
+﻿/* --- NỀN SÁNG CAO CẤP --- */
+.light-shop-root {
+    background-color: #fbfbfd !important; /* Màu xám đặc trưng của Apple */
     min-height: 100vh;
+    padding-bottom: 50px;
 }
 
-.shop-sidebar {
-    background-color: white;
-    padding: 24px;
-    border-radius: 16px;
-    border: 1px solid #eee;
-    /* Giúp sidebar dính chặt khi scroll nếu màn hình dài */
+/* --- FLOATING STICKY FILTER BAR --- */
+.sticky-filter-section {
     position: sticky;
-    top: 20px; 
+    top: 25px; /* Tạo khoảng cách 25px so với Header để thanh lọc "nổi" */
+    z-index: 1000;
+    margin: 20px 0 40px 0;
+    transition: all 0.4s ease;
 }
 
-/* Tùy chỉnh Pagination cho chuyên nghiệp hơn */
-.MuiPagination-ul {
-    gap: 8px;
+.horizontal-filter-bar {
+    background: rgba(255, 255, 255, 0.75) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 24px !important;
+    padding: 12px 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
 }
 
-.apply-filter-btn {
-    background-color: #0066cc !important;
-    text-transform: none !important;
-    font-weight: 600 !important;
-    border-radius: 8px !important;
-    padding: 10px !important;
+/* --- CATEGORY CHIPS --- */
+.category-scroll-container {
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.category-scroll-container::-webkit-scrollbar { display: none; }
+
+.modern-chip {
+    height: 38px !important;
+    border-radius: 12px !important;
+    background: rgba(0, 0, 0, 0.04) !important;
+    border: none !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
 }
 
-/* Đảm bảo danh sách sản phẩm có khoảng cách đều */
-.MuiGrid-container {
+.modern-chip.active {
+    background: #000 !important;
+    color: #fff !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* --- PREMIUM PRODUCT CARD --- */
+.premium-product-card {
+    background: #ffffff !important;
+    border-radius: 20px !important;
+    border: none !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03) !important;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+    cursor: pointer;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.premium-product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08) !important;
+}
+
+.card-image-container {
+    padding: 30px;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 250px;
+}
+
+.card-image-main {
     width: 100% !important;
-    margin-left: 0 !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    transition: transform 0.6s ease;
+}
+
+.premium-product-card:hover .card-image-main {
+    transform: scale(1.08);
+}
+
+.product-title-main {
+    font-weight: 700 !important;
+    font-size: 1.05rem !important;
+    color: #1d1d1f;
+    margin-bottom: 12px !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.8rem;
+}
+
+.price-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 20px;
+}
+
+.special-price-text {
+    color: #d70018;
+    font-weight: 800;
+    font-size: 1.15rem;
+}
+
+.original-price-text {
+    color: #86868b;
+    text-decoration: line-through;
+    font-size: 0.9rem;
+}
+
+.view-detail-btn {
+    border-radius: 30px !important;
+    background-color: #f5f5f7 !important;
+    color: #0066cc !important;
+    text-transform: none !important;
+    font-weight: 700 !important;
+    padding: 8px 0 !important;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease !important;
+}
+
+.premium-product-card:hover .view-detail-btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- POPOVER & UTILS --- */
+.filter-popover-paper {
+    border-radius: 24px !important;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.1) !important;
+    border: 1px solid rgba(0,0,0,0.05) !important;
+}
+
+.modern-pagination .MuiPaginationItem-root {
+    border-radius: 12px;
+    font-weight: 700;
+}
+
+.modern-pagination .Mui-selected {
+    background-color: #000 !important;
+    color: #fff !important;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

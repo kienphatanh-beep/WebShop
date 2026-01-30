@@ -1,0 +1,102 @@
+﻿/* Container tổng - Đẩy z-index lên cao nhất */
+.chat-ai-fixed {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 99999 !important; /* 🔥 Đảm bảo đè mọi thứ */
+}
+
+.chat-fab {
+    background: #1d1d1f !important;
+    color: white !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2) !important;
+    width: 48px !important; 
+    height: 48px !important;
+}
+
+/* 🔥 Thu nhỏ ô chat */
+.chat-window {
+    width: 300px; 
+    height: 420px; 
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(20px);
+    border-radius: 24px !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15) !important;
+}
+
+.chat-header {
+    padding: 10px 16px;
+    background: #1d1d1f;
+}
+
+.chat-body {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(245, 245, 247, 0.5);
+}
+
+.msg-bubble {
+    max-width: 85%;
+    padding: 8px 12px;
+    border-radius: 16px;
+    font-size: 0.82rem;
+}
+
+.msg-ai {
+    align-self: flex-start;
+    background: #fff;
+    border: 1px solid #e1e1e3;
+}
+
+/* 🔥 Thanh trượt ngang sản phẩm */
+.product-slider {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 10px 0;
+    scrollbar-width: none; /* Ẩn scrollbar Firefox */
+}
+
+.product-slider::-webkit-scrollbar {
+    display: none; /* Ẩn scrollbar Chrome */
+}
+
+.product-card-mini {
+    min-width: 130px; /* 🔥 Ô sản phẩm nhỏ gọn */
+    flex-shrink: 0;
+    border-radius: 12px !important;
+    border: 1px solid #eee !important;
+}
+
+/* 🔥 Ảnh full không bị cắt */
+.product-img-full {
+    height: 90px !important;
+    object-fit: contain !important; /* 🔥 Hiển thị toàn bộ ảnh */
+    background: #fff;
+    padding: 5px;
+}
+
+.product-name-link {
+    font-weight: 700;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    cursor: pointer;
+    font-size: 0.75rem !important;
+}
+
+.buy-btn-small {
+    background: #0071e3 !important;
+    text-transform: none !important;
+    font-size: 0.65rem !important;
+    padding: 2px !important;
+    margin-top: 5px !important;
+}

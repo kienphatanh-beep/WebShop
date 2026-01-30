@@ -1,57 +1,54 @@
-﻿/* --- LATEST PRODUCTS STYLES --- */
-
-.latest-products-section {
-    padding-top: 40px;
-    padding-bottom: 40px;
+﻿/* --- ROOT SECTION --- */
+.latest-section-root {
+    padding: 80px 0;
+    background: #fbfbfd;
 }
 
-.section-title {
-    text-align: center;
-    margin-bottom: 30px !important;
+/* --- KHUNG MỜ CHÍNH --- */
+.glass-main-card {
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(25px) saturate(200%);
+    -webkit-backdrop-filter: blur(25px) saturate(200%);
+    border-radius: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    padding: 50px 40px;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.06);
+}
+
+.tag-new {
+    color: #d70018 !important;
+    font-weight: 800 !important;
+    letter-spacing: 2px;
+    font-size: 0.75rem !important;
+}
+
+.btn-apple-link {
+    text-transform: none !important;
     font-weight: 700 !important;
-    text-transform: uppercase;
-    color: #333;
-    position: relative;
-    display: inline-block;
+    color: #0066cc !important;
+    border-radius: 20px !important;
 }
 
-.section-title::after {
-    content: '';
-    display: block;
-    width: 60px;
-    height: 4px;
-    background-color: #1976d2; 
-    margin: 10px auto 0;
-    border-radius: 2px;
-}
-
-/* --- GRID 5 CỘT TÙY CHỈNH --- */
-.product-grid-5 {
-    display: grid;
-    gap: 24px; /* Khoảng cách giữa các thẻ */
+/* --- GRID 5 CỘT CHUẨN (FIXED) --- */
+.latest-grid-5 {
+    display: grid !important;
+    gap: 25px;
     width: 100%;
-    
-    /* Mặc định Mobile (nhỏ nhất): 2 cột */
-    grid-template-columns: repeat(2, 1fr);
+    /* Mặc định cho Desktop */
+    grid-template-columns: repeat(5, 1fr) !important;
 }
 
-/* Tablet (Màn hình > 600px): 3 cột */
-@media (min-width: 600px) {
-    .product-grid-5 {
-        grid-template-columns: repeat(3, 1fr);
-    }
+/* Responsive */
+@media (max-width: 1200px) {
+    .latest-grid-5 { grid-template-columns: repeat(3, 1fr) !important; }
 }
 
-/* Laptop nhỏ (Màn hình > 900px): 4 cột */
-@media (min-width: 900px) {
-    .product-grid-5 {
-        grid-template-columns: repeat(4, 1fr);
-    }
+@media (max-width: 900px) {
+    .latest-grid-5 { grid-template-columns: repeat(2, 1fr) !important; }
 }
 
-/* Desktop lớn (Màn hình > 1200px): 5 cột chuẩn */
-@media (min-width: 1200px) {
-    .product-grid-5 {
-        grid-template-columns: repeat(5, 1fr);
-    }
+@media (max-width: 600px) {
+    .latest-grid-5 { grid-template-columns: repeat(1, 1fr) !important; }
 }
+
+/* XÓA BỎ grid-content-wrapper VÀ display: contents */

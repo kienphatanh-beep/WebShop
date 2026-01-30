@@ -1,7 +1,7 @@
 ﻿import React, { useState } from 'react';
 import { 
     Button, TextField, Typography, Box, 
-    InputAdornment, IconButton, Link, Alert, Fade
+    InputAdornment, IconButton, Link, Alert
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,7 +10,7 @@ import {
     Login as LoginIcon, CheckCircleOutline 
 } from '@mui/icons-material';
 
-import authApi from '../api/authApi'; // Đảm bảo đường dẫn đúng đến file api/authApi
+import authApi from '../api/authApi'; 
 import '../css/LoginPage.css';
 
 const LoginPage = () => {
@@ -19,7 +19,7 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
-    const [successMsg, setSuccessMsg] = useState(''); // Thêm thông báo thành công
+    const [successMsg, setSuccessMsg] = useState(''); 
     const [loading, setLoading] = useState(false);
 
     const handleLogin = async (e) => {
@@ -29,29 +29,35 @@ const LoginPage = () => {
         setLoading(true);
 
         try {
-            // Backend nhận @RequestParam nên hàm login trong api.js 
-            // phải dùng FormData như bạn đã viết trước đó
             const data = await authApi.login(email, password);
 
-            // CẬP NHẬT THEO BACKEND: Lấy thông báo từ data.message
-            setSuccessMsg(data.message || "Đăng nhập thành công!");
-            
-            // Lưu thông tin vào LocalStorage
-            localStorage.setItem('token', data['jwt-token']);
-            localStorage.setItem('userEmail', data.email);
-            localStorage.setItem('userRoles', JSON.stringify(data.roles));
+            // 1. Kiểm tra và lấy Token (Hỗ trợ cả 'jwt-token' và 'jwtToken')
+            const token = data['jwt-token'] || data.jwtToken || data.token;
+            // 2. Lấy email và userId từ dữ liệu Backend trả về
+            const userEmail = data.email || email; 
+            const userId = data.userId;
 
-            // Chờ 1 chút để user thấy thông báo thành công rồi mới chuyển trang
-            setTimeout(() => {
-                navigate('/');
-                window.location.reload();
-            }, 1000);
+            if (token) {
+                setSuccessMsg(data.message || "Đăng nhập thành công!");
+                
+                // 🔥 LƯU ĐỒNG BỘ VÀO LOCAL STORAGE (Rất quan trọng cho trang Profile)
+                localStorage.setItem('token', token);
+                localStorage.setItem('userEmail', userEmail); 
+                if (userId) localStorage.setItem('userId', userId);
+                localStorage.setItem('userRoles', JSON.stringify(data.roles || []));
+
+                // Chờ 1 chút để user thấy thông báo thành công
+                setTimeout(() => {
+                    navigate('/');
+                    window.location.reload(); 
+                }, 1000);
+            } else {
+                throw new Error("Thông tin xác thực không hợp lệ!");
+            }
 
         } catch (err) {
-            console.error(err);
-            // CẬP NHẬT THEO BACKEND: Lấy thông báo lỗi từ err.response.data.message
-            // Nếu sai pass, backend trả về: "Sai tài khoản hoặc mật khẩu!"
-            const backendError = err.response?.data?.message || "Lỗi kết nối đến server!";
+            console.error("Login Error:", err);
+            const backendError = err.response?.data?.message || "Sai tài khoản hoặc mật khẩu!";
             setError(backendError);
             setLoading(false);
         }
@@ -114,7 +120,6 @@ const LoginPage = () => {
 
                 <form onSubmit={handleLogin}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-                        
                         <TextField
                             fullWidth size="small"
                             placeholder="Email của bạn"
@@ -167,7 +172,6 @@ const LoginPage = () => {
                             </Link>
                         </Box>
 
-                        {/* THÔNG BÁO LỖI THEO BACKEND */}
                         <AnimatePresence>
                             {error && (
                                 <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
@@ -177,7 +181,6 @@ const LoginPage = () => {
                                 </motion.div>
                             )}
                             
-                            {/* THÔNG BÁO THÀNH CÔNG THEO BACKEND */}
                             {successMsg && (
                                 <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
                                     <Alert 

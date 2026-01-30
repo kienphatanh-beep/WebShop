@@ -1,88 +1,89 @@
 ﻿import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../api/api'; 
-import { 
-    Container, Typography, Button, Box, Skeleton 
-} from '@mui/material';
+import { Container, Typography, Button, Box, Skeleton, Stack } from '@mui/material';
 import { ArrowForward } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import ProductCard from './ProductCard'; 
 import '../css/LatestProducts.css'; 
 
+const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: { staggerChildren: 0.1, delayChildren: 0.2 }
+    }
+};
+
+const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    show: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 120, damping: 15 } }
+};
+
 const LatestProducts = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Logic gọi API lấy sản phẩm mới nhất (Hỗ trợ chuẩn HATEOAS)
     useEffect(() => {
         const fetchLatestProducts = async () => {
             try {
-                const params = {
-                    pageNumber: 0,
-                    pageSize: 5, // Lấy 5 sản phẩm
-                    sortBy: 'productId', 
-                    sortOrder: 'desc'    
-                };
-                // 🔥 api.searchProducts đã được cập nhật để lấy dữ liệu từ _embedded.productDTOList
+                const params = { pageNumber: 0, pageSize: 5, sortBy: 'productId', sortOrder: 'desc' };
                 const res = await api.searchProducts(params);
-                
-                if (res?.content && Array.isArray(res.content)) {
-                    setProducts(res.content);
-                } else {
-                    setProducts([]);
-                }
+                setProducts(res.content || []);
             } catch (error) {
-                console.error("Lỗi tải sản phẩm mới:", error);
-            } finally {
-                setLoading(false);
-            }
+                console.error("Lỗi tải sản phẩm:", error);
+            } finally { setLoading(false); }
         };
-
         fetchLatestProducts();
     }, []);
 
     return (
-        <Container maxWidth="xl" className="latest-products-section">
-            <Box textAlign="center" mb={4}>
-                <Typography variant="h4" className="section-title">
-                    Sản phẩm mới nhất
-                </Typography>
-            </Box>
-
-            <Box className="product-grid-5">
-                {loading ? (
-                    Array.from(new Array(5)).map((_, index) => (
-                        <Box key={index}>
-                            <Skeleton variant="rectangular" height={380} sx={{ borderRadius: 3 }} />
-                            <Skeleton width="60%" sx={{ mt: 1 }} />
-                            <Skeleton width="40%" />
+        <Box component="section" className="latest-section-root">
+            <Container maxWidth="xl">
+                <motion.div 
+                    className="glass-main-card"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.2 }} 
+                    transition={{ duration: 0.8 }}
+                >
+                    <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" alignItems="center" mb={5} spacing={2}>
+                        <Box>
+                            <Typography className="tag-new">LATEST COLLECTION</Typography>
+                            <Typography variant="h4" fontWeight="800" color="#1d1d1f">Sản phẩm mới nhất</Typography>
                         </Box>
-                    ))
-                ) : products.length > 0 ? (
-                    products.map((product, index) => (
-                        <motion.div 
-                            key={product.productId}
-                            initial={{ opacity: 0, y: 20 }} 
-                            animate={{ opacity: 1, y: 0 }} 
-                            transition={{ delay: index * 0.1 }}
-                            style={{ height: '100%' }}
-                        >
-                            {/* ProductCard đã cập nhật để dùng HATEOAS links cho ảnh */}
-                            <ProductCard product={product} />
-                        </motion.div>
-                    ))
-                ) : (
-                    <Box sx={{ gridColumn: "1 / -1", textAlign: "center", py: 5 }}>
-                        <Typography variant="h6" color="textSecondary">Chưa có sản phẩm nào!</Typography>
-                    </Box>
-                )}
-            </Box>
+                        <Button component={Link} to="/shop" endIcon={<ArrowForward />} className="btn-apple-link">
+                            Xem tất cả
+                        </Button>
+                    </Stack>
 
-            <Box textAlign="center" mt={6}>
-                <Button variant="outlined" size="large" color="primary" endIcon={<ArrowForward />}>
-                    Xem tất cả sản phẩm
-                </Button>
-            </Box>
-        </Container>
+                    <Box sx={{ width: '100%' }}>
+                        {loading ? (
+                            <Box className="latest-grid-5">
+                                {Array.from(new Array(5)).map((_, i) => (
+                                    <Skeleton key={i} variant="rectangular" height={320} sx={{ borderRadius: '16px' }} />
+                                ))}
+                            </Box>
+                        ) : (
+                            /* SỬA TẠI ĐÂY: Biến motion.div thành lưới Grid chính */
+                            <motion.div 
+                                className="latest-grid-5" 
+                                variants={containerVariants}
+                                initial="hidden"
+                                whileInView="show"
+                                viewport={{ once: true }}
+                            >
+                                {products.slice(0, 5).map((product) => (
+                                    <motion.div key={product.productId} variants={itemVariants}>
+                                        <ProductCard product={product} />
+                                    </motion.div>
+                                ))}
+                            </motion.div>
+                        )}
+                    </Box>
+                </motion.div>
+            </Container>
+        </Box>
     );
 };
 

@@ -1,72 +1,51 @@
 ﻿import React from 'react';
-import { Card, CardContent, Typography, Box } from '@mui/material';
-import { LocalOffer } from '@mui/icons-material';
+import { Card, CardContent, CardMedia, Typography, Box, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import '../css/ProductCard.css';
+import { motion } from 'framer-motion';
+
+const API_BASE_URL = 'http://localhost:8080/api';
 
 const ProductCard = ({ product }) => {
     const navigate = useNavigate();
-
-    const imageUrl = product._links?.image?.href || "https://via.placeholder.com/300";
-
-    const originalPrice = (product.discount > 0)
-        ? product.price / (1 - product.discount / 100)
-        : null;
-
-    const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('vi-VN', { 
-            style: 'currency', 
-            currency: 'VND' 
-        }).format(amount).replace(/\s₫/, 'đ');
-    };
-
-    const handleCardClick = () => {
-        navigate(`/products/${product.productId}`);
-    };
+    const formatCurrency = (val) => new Intl.NumberFormat('vi-VN').format(val) + "đ";
 
     return (
-        <Card className="product-card" onClick={handleCardClick}>
-            {/* BADGE GIẢM GIÁ */}
-            {product.discount > 0 && (
-                <Box className="discount-badge">Giảm {product.discount}%</Box>
-            )}
-
-            {/* BADGE TRẠNG THÁI */}
-            <Box className="new-badge">
-                <LocalOffer sx={{ fontSize: 12 }} /> Mới
-            </Box>
-
-            {/* KHUNG CHỨA ẢNH - Fix tỷ lệ 1:1 */}
-            <Box className="card-image-wrapper">
-                <img 
-                    src={imageUrl} 
+        <Card 
+            component={motion.div}
+            whileHover={{ y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="premium-product-card"
+            onClick={() => navigate(`/products/${product.productId}`)}
+            sx={{ opacity: 1 }} // Đảm bảo luôn hiện
+        >
+            <Box className="card-image-container">
+                <CardMedia
+                    component="img"
+                    image={product.image ? `${API_BASE_URL}/products/image/${product.image}` : "https://via.placeholder.com/300"}
                     alt={product.productName}
-                    className="card-image"
+                    className="card-image-main"
                 />
             </Box>
-
-            {/* NỘI DUNG CHỮ */}
-            <CardContent className="card-content">
-                <Typography variant="subtitle1" className="product-title" title={product.productName}>
+            
+            <CardContent sx={{ p: 3, textAlign: 'center', background: '#fff' }}>
+                <Typography className="product-title-main" variant="h6">
                     {product.productName}
                 </Typography>
-
-                <Box className="price-section">
-                    <Typography className="current-price">
-                        {formatCurrency(product.price)}
+                
+                <Box className="price-stack">
+                    <Typography className="special-price-text">
+                        {formatCurrency(product.specialPrice || product.price)}
                     </Typography>
-                    
-                    {/* Luôn render Box này để giữ khoảng cách (layout ổn định) */}
-                    <Box className="original-price-container">
-                        {product.discount > 0 && originalPrice ? (
-                            <Typography className="original-price">
-                                {formatCurrency(originalPrice)}
-                            </Typography>
-                        ) : (
-                            <Typography className="original-price-placeholder">&nbsp;</Typography>
-                        )}
-                    </Box>
+                    {product.discount > 0 && (
+                        <Typography className="original-price-text">
+                            {formatCurrency(product.price)}
+                        </Typography>
+                    )}
                 </Box>
+
+                <Button fullWidth className="view-detail-btn">
+                    Xem chi tiết
+                </Button>
             </CardContent>
         </Card>
     );

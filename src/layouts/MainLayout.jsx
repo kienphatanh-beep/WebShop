@@ -3,7 +3,7 @@ import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { 
     AppBar, Toolbar, Container, Box, InputBase, 
     IconButton, Button, Grid, Divider, Typography,
-    Menu, MenuItem, Avatar, Badge 
+    Menu, MenuItem, Avatar, Badge, Tooltip 
 } from '@mui/material';
 import { 
     Search, ShoppingCart, Person, Facebook, Logout, Login, AppRegistration, AccountCircle
@@ -11,13 +11,14 @@ import {
 
 import api from '../api/api'; 
 import cartApi from '../api/cartApi'; 
+import ChatAI from '../components/ChatAI'; // 🔥 Đã thêm: Import ChatAI
 import '../css/MainLayout.css'; 
 
 // --- HEADER ---
 const Header = () => {
     const [categories, setCategories] = useState([]);
     const [cartCount, setCartCount] = useState(0); 
-    const [searchTerm, setSearchTerm] = useState(""); // 🔥 Thêm state tìm kiếm
+    const [searchTerm, setSearchTerm] = useState(""); 
     const navigate = useNavigate();
     
     const [anchorEl, setAnchorEl] = useState(null);
@@ -31,7 +32,6 @@ const Header = () => {
         const fetchCategories = async () => {
             try {
                 const res = await api.getAllCategories();
-                // 🔥 Trích xuất từ _embedded theo file api.js của bạn
                 const categoryList = res._embedded ? res._embedded.categoryDTOList : (res.content || res);
                 setCategories(Array.isArray(categoryList) ? categoryList : []);
             } catch (error) {
@@ -41,7 +41,7 @@ const Header = () => {
         fetchCategories();
     }, []);
 
-    // 2. 🔥 Fetch Cart Count theo chuẩn HATEOAS (Giữ nguyên logic của bạn)
+    // 2. Fetch Cart Count theo chuẩn HATEOAS
     const fetchCartCount = useCallback(async () => {
         if (isLoggedIn) {
             try {
@@ -58,7 +58,7 @@ const Header = () => {
         }
     }, [isLoggedIn]);
 
-    // 3. Lắng nghe sự kiện cập nhật giỏ hàng (Giữ nguyên logic của bạn)
+    // 3. Lắng nghe sự kiện cập nhật giỏ hàng
     useEffect(() => {
         fetchCartCount(); 
         window.addEventListener("cartUpdated", fetchCartCount);
@@ -67,11 +67,10 @@ const Header = () => {
         };
     }, [fetchCartCount]);
 
-    // 4. 🔥 Xử lý tìm kiếm khi nhấn Enter
+    // 4. Xử lý tìm kiếm khi nhấn Enter
     const handleSearchKeyDown = (e) => {
         if (e.key === 'Enter' && searchTerm.trim() !== "") {
             navigate(`/shop?keyword=${encodeURIComponent(searchTerm.trim())}`);
-            // setSearchTerm(""); // Có thể xóa hoặc giữ lại tùy UX bạn muốn
         }
     };
 
@@ -86,11 +85,6 @@ const Header = () => {
             navigate('/');
             window.location.reload(); 
         }
-    };
-
-    const handleNavigate = (path) => {
-        handleMenuClose();
-        navigate(path);
     };
 
     return (
@@ -117,58 +111,99 @@ const Header = () => {
                                 fullWidth
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                onKeyDown={handleSearchKeyDown} // 🔥 Kích hoạt tìm kiếm
+                                onKeyDown={handleSearchKeyDown}
                             />
                         </div>
                     </Box>
 
                     <Box className="header-actions">
+                        {/* NÚT GIỎ HÀNG */}
                         <Button className="action-btn" onClick={() => navigate('/cart')}>
                             <Badge badgeContent={cartCount} color="error" showZero={false}>
                                 <ShoppingCart />
                             </Badge>
-                            <span style={{ marginLeft: '8px' }}>Giỏ hàng</span>
+                            <span className="action-text">Giỏ hàng</span>
                         </Button>
                         
-                        <Button 
-                            startIcon={isLoggedIn ? <Avatar sx={{ width: 24, height: 24, fontSize: 12 }}>{userEmail?.charAt(0).toUpperCase()}</Avatar> : <Person />} 
-                            className="action-btn"
-                            onClick={handleAccountClick}
-                        >
-                            {isLoggedIn ? (userEmail ? userEmail.split('@')[0] : "Tài khoản") : "Tài khoản"}
-                        </Button>
+                        {/* NÚT TÀI KHOẢN / AVATAR */}
+                        <Tooltip title={isLoggedIn ? userEmail : "Tài khoản"}>
+                            <IconButton 
+                                onClick={handleAccountClick}
+                                sx={{ 
+                                    p: 0, 
+                                    ml: 1, 
+                                    border: isLoggedIn ? '2px solid #e0e0e0' : 'none',
+                                    transition: 'transform 0.2s',
+                                    '&:hover': { transform: 'scale(1.05)' }
+                                }}
+                            >
+                                {isLoggedIn ? (
+                                    <Avatar 
+                                        sx={{ 
+                                            width: 35, 
+                                            height: 35, 
+                                            bgcolor: '#1d1d1f', 
+                                            fontSize: 14,
+                                            fontWeight: 700
+                                        }}
+                                    >
+                                        {userEmail?.charAt(0).toUpperCase()}
+                                    </Avatar>
+                                ) : (
+                                    <Avatar sx={{ width: 35, height: 35, bgcolor: 'transparent' }}>
+                                        <Person sx={{ color: '#1d1d1f', fontSize: 28 }} />
+                                    </Avatar>
+                                )}
+                            </IconButton>
+                        </Tooltip>
 
                         <Menu
                             anchorEl={anchorEl}
                             open={openMenu}
                             onClose={handleMenuClose}
                             PaperProps={{
-                                elevation: 3,
-                                sx: { mt: 1.5, minWidth: 200, borderRadius: '12px' }
+                                elevation: 4,
+                                sx: { 
+                                    mt: 1.5, 
+                                    minWidth: 220, 
+                                    borderRadius: '16px',
+                                    padding: '8px' 
+                                }
                             }}
+                            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                         >
                             {isLoggedIn ? [
-                                <MenuItem key="profile" onClick={handleMenuClose}>
+                                <Box key="user-info" sx={{ px: 2, py: 1.5 }}>
+                                    <Typography variant="subtitle2" noWrap fontWeight="bold">
+                                        {userEmail?.split('@')[0]}
+                                    </Typography>
+                                    <Typography variant="caption" color="text.secondary" noWrap>
+                                        {userEmail}
+                                    </Typography>
+                                </Box>,
+                                <Divider key="divider-1" sx={{ my: 1 }} />,
+                                <MenuItem key="profile" onClick={() => { handleMenuClose(); navigate('/profile'); }} sx={{ borderRadius: '8px' }}>
                                     <AccountCircle sx={{ mr: 1.5, color: '#666' }} /> Thông tin cá nhân
                                 </MenuItem>,
-                                <MenuItem key="orders" onClick={() => { handleMenuClose(); navigate('/orders'); }}>
+                                <MenuItem key="orders" onClick={() => { handleMenuClose(); navigate('/orders'); }} sx={{ borderRadius: '8px' }}>
                                     <ShoppingCart sx={{ mr: 1.5, color: '#666' }} /> Đơn hàng đã đặt
                                 </MenuItem>,
-                                <Divider key="divider" />,
-                                <MenuItem key="logout" onClick={handleLogout} sx={{ color: 'error.main' }}>
+                                <Divider key="divider-2" sx={{ my: 1 }} />,
+                                <MenuItem key="logout" onClick={handleLogout} sx={{ color: 'error.main', borderRadius: '8px' }}>
                                     <Logout sx={{ mr: 1.5 }} /> Đăng xuất
                                 </MenuItem>
                             ] : [
-                                <MenuItem key="login" onClick={() => { handleMenuClose(); navigate('/login'); }}>
+                                <MenuItem key="login" onClick={() => { handleMenuClose(); navigate('/login'); }} sx={{ borderRadius: '8px' }}>
                                     <Login sx={{ mr: 1.5, color: '#0066cc' }} /> Đăng nhập
                                 </MenuItem>,
-                                <MenuItem key="register" onClick={() => { handleMenuClose(); navigate('/register'); }}>
+                                <MenuItem key="register" onClick={() => { handleMenuClose(); navigate('/register'); }} sx={{ borderRadius: '8px' }}>
                                     <AppRegistration sx={{ mr: 1.5, color: '#28a745' }} /> Đăng ký
                                 </MenuItem>
                             ]}
                         </Menu>
 
-                        <Box sx={{ ml: 1, fontSize: 20, cursor: 'default' }}>2026 🇻🇳</Box>
+                        <Box sx={{ ml: 2, fontSize: 18, fontWeight: 600, color: '#86868b', cursor: 'default' }}>2026 🇻🇳</Box>
                     </Box>
                 </Toolbar>
 
@@ -222,6 +257,7 @@ const Footer = () => {
     );
 };
 
+// --- MAIN LAYOUT ---
 const MainLayout = () => {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%' }}>
@@ -230,6 +266,9 @@ const MainLayout = () => {
                 <Outlet />
             </Box>
             <Footer />
+            
+            {/* 🔥 THÀNH PHẦN CHAT AI LUÔN HIỆN DIỆN */}
+            <ChatAI />
         </Box>
     );
 };

@@ -12,6 +12,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';        
 import CartPage from './pages/CartPage'; // <--- Hệ thống sẽ tự tìm CartPage.jsx
 import Shop from './pages/Shop';
+import ProfilePage from './pages/ProfilePage'; // Import trang mới
 
 const theme = createTheme({
   palette: {
@@ -37,6 +38,8 @@ function App() {
             <Route path="cart" element={<CartPage />} />
             <Route path="orders" element={<OrdersPage />} />
             <Route path="shop" element={<Shop />} />
+            <Route path="profile" element={<ProfilePage />} />
+            
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>

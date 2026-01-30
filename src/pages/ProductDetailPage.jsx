@@ -1,13 +1,17 @@
 ﻿import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../api/api';
 import cartApi from '../api/cartApi';
 import { 
     Container, Grid, Typography, Box, Button, Stack, 
-    Divider, IconButton, CircularProgress 
+    Divider, IconButton, CircularProgress, Paper, Breadcrumbs
 } from '@mui/material';
-import { CheckCircle, AddShoppingCart, Description, Add, Remove } from '@mui/icons-material';
+import { 
+    CheckCircle, AddShoppingCart, Description, Add, Remove, 
+    NavigateNext, LocalOffer 
+} from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion'; 
+import RelatedProducts from '../components/RelatedProducts'; 
 import '../css/ProductDetailPage.css';
 
 const API_BASE_URL = 'http://localhost:8080/api';
@@ -25,14 +29,13 @@ const ProductDetailPage = () => {
     const navigate = useNavigate();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [adding, setAdding] = useState(false); // Trạng thái khi đang bấm nút thêm
+    const [adding, setAdding] = useState(false); 
     const [showSuccess, setShowSuccess] = useState(false); 
 
     const [selectedStorage, setSelectedStorage] = useState("256GB");
     const [selectedColor, setSelectedColor] = useState(COLOR_OPTIONS[0]);
     const [quantity, setQuantity] = useState(1);
 
-    // Kiểm tra đăng nhập
     const isLoggedIn = !!localStorage.getItem('token');
 
     useEffect(() => {
@@ -48,7 +51,7 @@ const ProductDetailPage = () => {
             }
         };
         fetchProduct();
-        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
     }, [productId]);
 
     const handleQuantityChange = (change) => {
@@ -56,36 +59,25 @@ const ProductDetailPage = () => {
         if (newQty >= 1) setQuantity(newQty);
     };
 
-    // 🔥 HÀM THÊM GIỎ HÀNG ĐÃ CẬP NHẬT (BẢO MẬT TOKEN)
     const handleAddToCart = async (isBuyNow = false) => {
         if (!isLoggedIn) {
-            alert("Vui lòng đăng nhập để mua hàng!");
+            alert("Vui lòng đăng nhập!");
             navigate('/login');
             return;
         }
-
         try {
             setAdding(true);
-            // Gọi API mới: Chỉ truyền productId và quantity
-            // Backend tự lấy Email từ Token để tìm Cart
             await cartApi.addToCart(product.productId, quantity);
-            
-            // Bắn sự kiện cập nhật Badge trên Header
             window.dispatchEvent(new Event("cartUpdated"));
-            
-            if (isBuyNow) {
-                navigate('/cart');
-            } else {
+            if (isBuyNow) navigate('/cart');
+            else {
                 setShowSuccess(true);
                 setTimeout(() => setShowSuccess(false), 3000); 
             }
         } catch (error) {
-            console.error("Lỗi thêm giỏ hàng:", error);
-            if (error.response?.status === 401) {
-                alert("Phiên đăng nhập hết hạn!");
+            if (error.response?.status === 403 || error.response?.status === 401) {
+                localStorage.clear(); 
                 navigate('/login');
-            } else {
-                alert("Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại sau.");
             }
         } finally {
             setAdding(false);
@@ -95,191 +87,171 @@ const ProductDetailPage = () => {
     const formatCurrency = (val) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val);
 
     if (loading) return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
-            <CircularProgress color="inherit" />
-            <Typography sx={{ ml: 2 }}>Đang tải sản phẩm...</Typography>
+        <Box className="loader-container">
+            <CircularProgress size={40} sx={{ color: '#0066cc' }} />
         </Box>
     );
 
-    if (!product) return (
-        <Box sx={{ pt: 10, textAlign: 'center' }}>
-            <Typography variant="h5">Không tìm thấy sản phẩm!</Typography>
-            <Button onClick={() => navigate('/')} sx={{ mt: 2 }}>Quay lại trang chủ</Button>
-        </Box>
-    );
+    if (!product) return null;
 
     return (
-        <Container maxWidth="lg" className="detail-container" sx={{ position: 'relative', bgcolor: '#fff', py: 4, borderRadius: 2, mt: 4 }}>
-            
-            {/* --- THÔNG BÁO THÀNH CÔNG --- */}
-            <AnimatePresence>
-                {showSuccess && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.3 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.5 }}
-                        className="success-modal-overlay"
-                        style={{
-                            position: 'fixed', top: '50%', left: '50%',
-                            transform: 'translate(-50%, -50%)', x: '-50%', y: '-50%',
-                            zIndex: 9999, background: 'rgba(255, 255, 255, 0.98)',
-                            padding: '40px', borderRadius: '24px',
-                            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-                            textAlign: 'center', border: '2px solid #28a745',
-                            backdropFilter: 'blur(10px)', minWidth: '320px'
-                        }}
-                    >
-                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1.2 }} transition={{ type: "spring", stiffness: 200 }}>
-                            <CheckCircle sx={{ fontSize: 80, color: '#28a745', mb: 2 }} />
-                        </motion.div>
-                        <Typography variant="h5" sx={{ color: '#000', fontWeight: 'bold', mb: 1 }}>THÀNH CÔNG!</Typography>
-                        <Typography variant="body1" sx={{ color: '#555', mb: 3 }}>Sản phẩm đã được thêm vào giỏ.</Typography>
-                        <Button 
-                            variant="contained" 
-                            onClick={() => navigate('/cart')}
-                            sx={{ bgcolor: '#000', color: '#fff', borderRadius: '10px', px: 4, '&:hover': { bgcolor: '#333' } }}
-                        >
-                            Xem giỏ hàng
-                        </Button>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+        <motion.div 
+            initial={{ opacity: 0, y: 30 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+            <Container maxWidth="lg" className="detail-compact-container">
+                
+                {/* --- BREADCRUMBS: Theo ảnh image_d39627 --- */}
+                <Breadcrumbs 
+                    separator={<NavigateNext fontSize="small" sx={{ color: '#86868b' }} />} 
+                    className="breadcrumb-area"
+                >
+                    <Link to="/" className="b-link">Trang chủ</Link>
+                    <Link to="/shop" className="b-link">Sản phẩm</Link>
+                    <Link to={`/shop?categoryId=${product.categoryId}`} className="b-link">
+                        {product.categoryName || "Danh mục"}
+                    </Link>
+                    <Typography className="b-current">{product.productName}</Typography>
+                </Breadcrumbs>
 
-            <Grid container spacing={4} justifyContent="center"> 
-                {/* --- CỘT TRÁI: ẢNH --- */}
-                <Grid item xs={12} md={5}>
-                    <Box className="detail-image-wrapper" sx={{ border: '1px solid #eee', borderRadius: 4, overflow: 'hidden', p: 2 }}>
-                        <img 
-                            src={product.image ? `${API_BASE_URL}/products/image/${product.image}` : "https://via.placeholder.com/500"} 
-                            alt={product.productName} 
-                            className="detail-image"
-                            style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
-                        />
-                    </Box>
+                <Paper elevation={0} className="detail-glass-card">
                     
-                    <Stack direction="row" spacing={2} justifyContent="center" mt={2}>
-                        {[1, 2, 3].map((item) => (
-                             <Box key={item} sx={{ width: 70, height: 70, border: '1px solid #eee', borderRadius: 2, p: 1, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <img src={product.image ? `${API_BASE_URL}/products/image/${product.image}` : ""} alt="" style={{ maxWidth: '90%', maxHeight: '90%', objectFit: 'contain' }} />
-                             </Box>
-                        ))}
-                    </Stack>
+                    <AnimatePresence>
+                        {showSuccess && (
+                            <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="compact-toast-msg">
+                                <CheckCircle sx={{ color: '#28a745', mr: 1, fontSize: 20 }} />
+                                <Typography variant="caption" fontWeight="bold">Đã thêm vào giỏ hàng!</Typography>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
-                    <Box className="product-description-box" sx={{ mt: 4, p: 3, bgcolor: '#f9f9f9', borderRadius: 2 }}>
-                        <Typography variant="h6" fontWeight="bold" display="flex" alignItems="center" gutterBottom sx={{ color: '#000', fontSize: '1.1rem' }}>
-                            <Description sx={{ mr: 1, color: '#0066cc' }} /> Đặc điểm nổi bật
-                        </Typography>
-                        <Divider sx={{ mb: 2 }} />
-                        <Typography variant="body2" sx={{ color: '#444', lineHeight: 1.8, whiteSpace: 'pre-line' }}>
-                            {product.description || "Thông tin sản phẩm đang được cập nhật..."}
-                        </Typography>
-                    </Box>
-                </Grid>
-
-                {/* --- CỘT PHẢI: CHI TIẾT --- */}
-                <Grid item xs={12} md={6}>
-                    <Box className="right-column-content">
-                        <Typography variant="h4" fontWeight="900" sx={{ color: '#000', mb: 2 }}>
-                            {product.productName}
-                        </Typography>
-
-                        <Stack direction="row" alignItems="center" spacing={2} mb={3}>
-                            <Typography variant="h4" sx={{ color: '#d70018', fontWeight: 'bold' }}>
-                                {formatCurrency(product.specialPrice || product.price)}
-                            </Typography>
-                            {product.discount > 0 && (
-                                <Typography sx={{ color: '#888', textDecoration: 'line-through', fontSize: '1.2rem' }}>
-                                    {formatCurrency(product.price)}
-                                </Typography>
-                            )}
-                        </Stack>
-
-                        <Divider sx={{ mb: 3 }} />
-
-                        {/* DUNG LƯỢNG */}
-                        <Typography variant="subtitle2" fontWeight="bold" mb={1.5} sx={{ color: '#000' }}>Dung lượng:</Typography>
-                        <Stack direction="row" spacing={1.5} mb={3} flexWrap="wrap" useFlexGap>
-                            {STORAGE_OPTIONS.map((storage) => (
-                                <button 
-                                    key={storage}
-                                    className={`option-btn ${selectedStorage === storage ? 'selected' : ''}`}
-                                    onClick={() => setSelectedStorage(storage)}
-                                >
-                                    {storage}
-                                </button>
-                            ))}
-                        </Stack>
-
-                        {/* MÀU SẮC */}
-                        <Typography variant="subtitle2" fontWeight="bold" mb={1.5} sx={{ color: '#000' }}>Màu sắc: {selectedColor.name}</Typography>
-                        <Stack direction="row" spacing={2} mb={3}>
-                            {COLOR_OPTIONS.map((color) => (
-                                <Box 
-                                    key={color.code}
-                                    onClick={() => setSelectedColor(color)}
-                                    sx={{ 
-                                        backgroundColor: color.code,
-                                        width: 38, height: 38, borderRadius: '50%', cursor: 'pointer',
-                                        border: selectedColor.code === color.code ? '3px solid #0066cc' : '1px solid #ddd',
-                                        transition: '0.2s'
-                                    }}
+                    <Grid container spacing={5}> 
+                        {/* --- TRÁI: ẢNH --- */}
+                        <Grid item xs={12} md={5.5}>
+                            <Box className="compact-img-box">
+                                <img 
+                                    src={product.image ? `${API_BASE_URL}/products/image/${product.image}` : "https://via.placeholder.com/400"} 
+                                    alt={product.productName} 
+                                    className="img-main-comp"
                                 />
-                            ))}
-                        </Stack>
-
-                        {/* SỐ LƯỢNG */}
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
-                            <Typography variant="subtitle2" fontWeight="bold" sx={{ mr: 3, color: '#000' }}>Số lượng:</Typography>
-                            <Stack direction="row" alignItems="center" sx={{ border: '1px solid #ddd', borderRadius: '8px' }}>
-                                <IconButton size="small" onClick={() => handleQuantityChange(-1)} disabled={quantity <= 1} sx={{ color: '#000' }}>
-                                    <Remove />
-                                </IconButton>
-                                <Typography sx={{ mx: 2, minWidth: '40px', textAlign: 'center', fontWeight: 'bold', fontSize: '1.1rem' }}>
-                                    {quantity}
-                                </Typography>
-                                <IconButton size="small" onClick={() => handleQuantityChange(1)} sx={{ color: '#000' }}>
-                                    <Add />
-                                </IconButton>
-                            </Stack>
-                        </Box>
-
-                        {/* ƯU ĐÃI */}
-                        <Box sx={{ p: 2, border: '1px solid #ffeeba', borderRadius: 2, mb: 4, bgcolor: '#fffcf0' }}>
-                            <Typography variant="subtitle1" fontWeight="bold" sx={{ color: '#856404', mb: 1 }}>🎁 Khuyến mãi hấp dẫn</Typography>
-                            <Stack spacing={1}>
-                                <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', color: '#555' }}>
-                                    <CheckCircle sx={{ fontSize: 16, mr: 1, color: '#28a745' }} /> Miễn phí giao hàng cho đơn hàng từ 1 triệu.
-                                </Typography>
-                                <Typography variant="body2" sx={{ display: 'flex', alignItems: 'center', color: '#555' }}>
-                                    <CheckCircle sx={{ fontSize: 16, mr: 1, color: '#28a745' }} /> Bảo hành 12 tháng chính hãng Apple Việt Nam.
-                                </Typography>
-                            </Stack>
-                        </Box>
-
-                        {/* BUTTONS */}
-                        <Stack direction="row" spacing={2}>
-                            <Button 
-                                variant="contained" size="large" fullWidth 
-                                disabled={adding}
-                                onClick={() => handleAddToCart(true)}
-                                sx={{ bgcolor: '#0066cc', color: '#fff', height: 60, fontSize: '1.1rem', fontWeight: 'bold', borderRadius: 2, '&:hover': { bgcolor: '#004499' } }}
-                            >
-                                MUA NGAY
-                            </Button>
+                            </Box>
                             
-                            <Button 
-                                variant="outlined" size="large" 
-                                disabled={adding}
-                                onClick={() => handleAddToCart(false)}
-                                sx={{ height: 60, minWidth: 80, borderColor: '#0066cc', color: '#0066cc', borderRadius: 2, '&:hover': { bgcolor: '#f0f7ff' } }}
-                            >
-                                {adding ? <CircularProgress size={24} /> : <AddShoppingCart fontSize="large" />}
-                            </Button>
-                        </Stack>
-                    </Box>
-                </Grid>
-            </Grid>
-        </Container>
+                            <Stack direction="row" spacing={1} justifyContent="center" mt={2}>
+                                {[1, 2, 3].map((i) => (
+                                     <Box key={i} className="mini-thumb-item">
+                                        <img src={product.image ? `${API_BASE_URL}/products/image/${product.image}` : ""} alt="thumb" />
+                                     </Box>
+                                ))}
+                            </Stack>
+
+                            <Box className="desc-box-compact">
+                                <Typography className="desc-label">
+                                    <Description sx={{ fontSize: 18, mr: 0.5, color: '#1d1d1f' }} /> ĐẶC ĐIỂM NỔI BẬT
+                                </Typography>
+                                <Typography className="desc-body">{product.description}</Typography>
+                            </Box>
+                        </Grid>
+
+                        {/* --- PHẢI: INFO --- */}
+                        <Grid item xs={12} md={6.5}>
+                            <Box className="info-area-compact">
+                                <Typography variant="h5" className="comp-title">{product.productName}</Typography>
+
+                                <Stack direction="row" alignItems="baseline" spacing={2} my={1}>
+                                    <Typography variant="h5" className="comp-price-now">
+                                        {formatCurrency(product.specialPrice || product.price)}
+                                    </Typography>
+                                    {product.discount > 0 && (
+                                        <Typography className="comp-price-old">{formatCurrency(product.price)}</Typography>
+                                    )}
+                                </Stack>
+
+                                <Divider className="comp-divider" />
+
+                                <Typography className="comp-label">Dung lượng:</Typography>
+                                <Stack direction="row" spacing={1} mb={2.5}>
+                                    {STORAGE_OPTIONS.map((s) => (
+                                        <button 
+                                            key={s} 
+                                            className={`chip-btn-comp ${selectedStorage === s ? 'active' : ''}`}
+                                            onClick={() => setSelectedStorage(s)}
+                                        >{s}</button>
+                                    ))}
+                                </Stack>
+
+                                <Typography className="comp-label">Màu sắc: <span>{selectedColor.name}</span></Typography>
+                                <Stack direction="row" spacing={1.5} mb={3}>
+                                    {COLOR_OPTIONS.map((c) => (
+                                        <Box 
+                                            key={c.code} 
+                                            onClick={() => setSelectedColor(c)}
+                                            className={`dot-comp ${selectedColor.code === c.code ? 'active' : ''}`}
+                                            sx={{ bgcolor: c.code }}
+                                        />
+                                    ))}
+                                </Stack>
+
+                                {/* --- KHUNG ƯU ĐÃI: Theo image_d39627 --- */}
+                                <Box className="promo-container-comp">
+                                    <Box className="promo-header">
+                                        <LocalOffer sx={{ fontSize: 16, mr: 1 }} /> Ưu đãi
+                                    </Box>
+                                    <Box className="promo-content">
+                                        <Typography variant="caption" color="textSecondary" display="block" mb={1} fontStyle="italic">
+                                            ( Khuyến mãi dự kiến áp dụng đến 23h59 | 31/1/2026 )
+                                        </Typography>
+                                        <Stack spacing={1}>
+                                            <Box className="promo-item">
+                                                <CheckCircle className="check-icon" />
+                                                <Typography variant="caption" fontWeight="600">Ưu đãi thanh toán</Typography>
+                                            </Box>
+                                            <Typography variant="caption" sx={{ml: 3, display: 'block', color: '#444'}}>
+                                                • Giảm 5% tối đa 200.000đ khi thanh toán qua Kredivo. <br/>
+                                                • Bảo hành 12 tháng chính hãng Apple Việt Nam.
+                                            </Typography>
+                                        </Stack>
+                                    </Box>
+                                </Box>
+
+                                {/* --- NHÓM NÚT BẤM: Sửa lỗi đè layout --- */}
+                                <Box className="action-buttons-group">
+                                    <Stack direction="row" spacing={2} alignItems="center">
+                                        <Box className="qty-box-comp">
+                                            <IconButton size="small" onClick={() => handleQuantityChange(-1)} disabled={quantity <= 1}><Remove fontSize="inherit"/></IconButton>
+                                            <Typography className="qty-val-comp">{quantity}</Typography>
+                                            <IconButton size="small" onClick={() => handleQuantityChange(1)}><Add fontSize="inherit"/></IconButton>
+                                        </Box>
+                                        
+                                        <Button 
+                                            variant="outlined" 
+                                            disabled={adding} 
+                                            onClick={() => handleAddToCart(false)} 
+                                            className="btn-add-comp"
+                                            startIcon={adding ? <CircularProgress size={16} /> : <AddShoppingCart fontSize="small" />}
+                                        >
+                                            Thêm giỏ hàng
+                                        </Button>
+                                    </Stack>
+
+                                    <Button 
+                                        variant="contained" 
+                                        fullWidth 
+                                        disabled={adding} 
+                                        onClick={() => handleAddToCart(true)} 
+                                        className="btn-buy-comp"
+                                    >
+                                        MUA NGAY
+                                    </Button>
+                                </Box>
+                            </Box>
+                        </Grid>
+                    </Grid>
+
+                    <RelatedProducts categoryId={product.categoryId} currentProductId={product.productId} />
+                </Paper>
+            </Container>
+        </motion.div>
     );
 };
 
